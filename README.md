@@ -93,3 +93,85 @@ http.createServer(function(request, response) {
 }).listen(3000);
 ```
 
+<br>
+
+## Secure & HttpOnly
+### Secure
+- `Session id` 를 이용한 공격을 방지
+- Https를 사용하는 경우에만 웹 브라우저가 웹 서버에게 데이터를 전송
+- `Secure=Secure; Secure` 와 같이 사용
+
+<br>
+
+### HttpOnly
+- 웹 브라우저가 웹 서버와 통신할 때만 쿠키를 허용
+- `Session id` 와 같은 보안이슈를 불러일으킬 수 있는 정보는 <br>
+  자바스크립트를 통해서 접근을 할 수 없게 만드는 옵션
+- `HttpOnly=HttpOnly; HttpOnly` 와 같이 사용
+
+<br>
+
+## Path & Domain
+- 쿠키를 제어하는 방법 중 하나
+
+<br>
+
+### Path
+: 쿠키가 어떤 path에서만 동작할 것인가를 지정
+
+<br>
+
+### 예시
+
+```
+var http = require('http');
+http.createServer(function(request, response) {
+    var cookies = cookie.parse(request.headers.cookie);
+    console.log(cookies);
+    response.writeHead(200, {
+      'Set-Cookie' : ['yummy_cookie=choco', 
+                      'tasty_cookie=strawberry',
+                      `Permanent=cookies;
+                      Max-Age=${60*60*24*30}`,
+                      'Path=Path; Path=/cookie'
+       ]
+    });
+    response.end('Cookie!!');
+}).listen(3000);
+```
+
+<br>
+
+- 위와 같이 디렉토리를 지정하면 해당 디렉토리와 그 하위에 해당하는 쿠키만<br>
+  서버에 전송
+
+<br>
+
+### domain
+: 쿠키가 어떤 path에서만 동작할 것인가를 지정
+
+<br>
+
+### 예시
+
+```
+var http = require('http');
+http.createServer(function(request, response) {
+    var cookies = cookie.parse(request.headers.cookie);
+    console.log(cookies);
+    response.writeHead(200, {
+      'Set-Cookie' : ['yummy_cookie=choco', 
+                      'tasty_cookie=strawberry',
+                      `Permanent=cookies;
+                      Max-Age=${60*60*24*30}`,
+                      'Path=Path; Path=/cookie',
+                      'Domain=Domain; Domain=o2.org'
+       ]
+    });
+    response.end('Cookie!!');
+}).listen(3000);
+```
+
+<br>
+
+- 위 코드의 경우 `o2.org/3000` or 서브 도메인(`test.o2.org/3000`) 에서만 쿠키가 살아있게 된다.
